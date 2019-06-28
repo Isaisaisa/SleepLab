@@ -8,4 +8,4 @@ __pycache__/
 
 ## program specific
 config_dev.py
-data/save/
+save/
