@@ -46,17 +46,16 @@ patDictResampled  = {}
 # downsample the signals from the different sample frequency to 30 HZ
 # 10 hour of signal with 30 HZ --> 30 * 60 * 60 * 10 = 1080000
 targetFrequency = 10
-for key in patDict:
-    if key == 1:
-        print("1")
-    else:
-        data = patDict[key]
-        dataResampled = np.zeros((len(listOfSensors),targetFrequency * 60 * 60 * 10))
-        for idx, sensor in enumerate(listOfSensors):
-            dataResampled[idx,:] = PreProcessing.downsample(data[idx], targetFrequency)
-            DataHandler.saveNumpyData(dataResampled[idx,:], sensor + "_resampled", key)
-        patDictResampled[key] = dataResampled
 
+
+for key in patDict:
+    data = patDict[key]
+    dataTime = patDict[key].shape[1] / 200
+    dataResampled = np.zeros((len(listOfSensors),targetFrequency * 60 * 60 * dataTime))
+    for idx, sensor in enumerate(listOfSensors):
+        dataResampled[idx,:] = PreProcessing.downsample(data[idx], targetFrequency)
+        DataHandler.saveNumpyData(dataResampled[idx,:], sensor + "_resampled", key)
+    patDictResampled[key] = dataResampled
 
 print(patDict[1].shape)
 
