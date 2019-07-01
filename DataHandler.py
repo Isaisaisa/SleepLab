@@ -27,7 +27,7 @@ def readCSVData(fileName, patientID):
 # save the given data 'data' under the name 'fileName' in the directory with the patients ID
 # if the directory under cfg.SAVEPATH doesnt exists it will be created
 def saveNumpyData(data, fileName, patientID):
-    filepath = cfg.SAVEPATH + str(patientID) + "\\" +  fileName + '.npy'
+    filepath = os.path.join(cfg.SAVEPATH, str(patientID),  fileName + '.npy')
     if not os.path.exists(filepath):
         #if not os.path.exists(cfg.SAVEPATH):
         os.makedirs(cfg.SAVEPATH + str(patientID) + "\\", exist_ok=True)
@@ -40,6 +40,6 @@ def readCSVDataAndSaveAsNumpy(fileName, patientID):
     saveNumpyData(data, fileName, patientID)
     return data
 
-# this function loads numpy arrays
-def loadNumpyData():
-    return False
+# this function loads the numpy array of the sensor data
+def loadNumpySensorData(sensorName, patientID):
+    return np.load(cfg.SAVEPATH + "\\" + str(patientID) + "\\" + sensorName + ".npy")

@@ -1,5 +1,8 @@
 import DataHandler
+import PreProcessing
 import numpy as np
+import config_dev as cfg
+import matplotlib.pyplot as plt
 
 #switches
 LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY = False
@@ -8,7 +11,7 @@ LOAD_SAVED_NUMPY_DATA = True
 
 # add the sensors that should be used
 listOfSensors = []
-listOfSensors.append("REOGM1_150HZ")
+#listOfSensors.append("REOGM1_150HZ")
 listOfSensors.append("C4M1")
 listOfSensors.append("C3M2")
 listOfSensors.append("F3M2")
@@ -23,13 +26,38 @@ if LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY:
         for patient in listOfPatients:
             DataHandler.readCSVDataAndSaveAsNumpy(sensor, patient)
 
-# load the saved numpy arrays
+# load the saved numpy arrays into a dictionary
+patDict = {}
 if LOAD_SAVED_NUMPY_DATA:
-    dataEOG = np.zeros((len(listOfPatients),len(listOfSensors)))
+    for patient in listOfPatients:
+        key = patient
 
+        length = np.load(cfg.SAVEPATH + str(patient) + "\\" + listOfSensors[1] + ".npy").shape[1]
+        data = np.zeros((len(listOfSensors), length))
 
+        for idx, sensor in enumerate(listOfSensors):
+            data[idx,:] = DataHandler.loadNumpySensorData(sensor, patient)
 
+        patDict[key] = data
 
+#print(patDict)
+print(patDict[1].shape   )
+patDictResampled  = {}
 # downsample the signals from the different sample frequency to 30 HZ
 # 10 hour of signal with 30 HZ --> 30 * 60 * 60 * 10 = 1080000
+targetFrequency = 10
+for key in patDict:
+    if key == 1:
+        print("1")
+    else:
+        data = patDict[key]
+        dataResampled = np.zeros((len(listOfSensors),targetFrequency * 60 * 60 * 10))
+        for idx, sensor in enumerate(listOfSensors):
+            dataResampled[idx,:] = PreProcessing.downsample(data[idx], targetFrequency)
+            DataHandler.saveNumpyData(dataResampled[idx,:], sensor + "_resampled", key)
+        patDictResampled[key] = dataResampled
+
+
+print(patDict[1].shape)
+
 
