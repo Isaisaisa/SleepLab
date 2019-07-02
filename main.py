@@ -64,6 +64,10 @@ if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
             tempData[idxSensor,:] = DataHandler.loadNumpySensorData(sensor,patient)
         sensorData.append(tempData)
 
+    #segmentedData contains the segmented 30 sec windows as discussed in a 3d numpy array
+    #   first dimension --> number of samples
+    #   second dimension --> number of sensors
+    #   third dimension --> 30 second of the origin input data at 10 Hz = 300 data points
     segmentedData = PreProcessing.segmentData(sensorData)
     print(segmentedData.shape)
 
