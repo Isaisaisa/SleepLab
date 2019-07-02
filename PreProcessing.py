@@ -3,4 +3,5 @@ import scipy.signal as signal
 
 #This function downsample data from
 def downsample(data, frequency):
-    return signal.resample(data, frequency * 60 * 60 * 10)
+    data = signal.resample(data, frequency)
+    return data
