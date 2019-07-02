@@ -71,5 +71,6 @@ if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
     segmentedData = PreProcessing.segmentData(sensorData)
     print(segmentedData.shape)
 
+    label_pat1 = PreProcessing.extract_labels(1)
 
 

@@ -1,6 +1,8 @@
 # This file implements some functions to preprocess data
 import scipy.signal as signal
 import numpy as np
+import csv
+import config_dev as cfg
 
 #This function downsample data 'data' with the given 'frequency'
 def downsample(data, frequency):
@@ -37,3 +39,25 @@ def segmentData(data):
 
     return dataSegmented
 
+# this function extract the labels from the csv files and changes the strings to numbers
+def extract_labels(patNr):
+    path = cfg.LOADPATH + str(patNr) + "\\SleepStaging.csv"
+    with open(path, 'rt') as csvfile:
+        dataReader = csv.reader(csvfile, delimiter=',')
+        # get the number of rows of the csv file
+        row_count = sum(1 for row in dataReader)
+        # reset the reader to the first row
+        csvfile.seek(0)
+        dataReader = csv.reader(csvfile, delimiter=',')
+        # skip the first row due to unimportant informations
+        next(dataReader)
+
+        label = np.zeros((1, row_count))
+        #change the string label to numbers
+        label_dict = {"WK": 1, "REM": 2, "N1": 3, "N2": 4, "N3": 5}
+        # read the data
+        for row in dataReader:
+            row[2] = label_dict[row[2]]
+            print(row[2])
+            label[0, dataReader.line_num - 1] = row[2]
+        return label
