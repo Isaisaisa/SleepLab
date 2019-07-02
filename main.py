@@ -5,9 +5,9 @@ import config_dev as cfg
 import matplotlib.pyplot as plt
 
 #switches
-LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY = True
+LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY = False
 LOAD_SAVED_NUMPY_DATA_AND_DOWNSAMPLE = False
-
+SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY = True
 
 # add the sensors that should be used
 listOfSensors = []
@@ -48,4 +48,24 @@ if LOAD_SAVED_NUMPY_DATA_AND_DOWNSAMPLE:
             dataResampled = PreProcessing.downsample(data[0,:], targetFrequency * int(signalLength))
             #save the resampled data
             DataHandler.saveNumpyData(dataResampled, sensor + "_resampled", patient)
+
+#Segmentation
+if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
+    #load the data from numpy arrays and save in dataList as 3d numpy array
+    #   first dimension -> number of patient
+    #   second dimension --> XX sensors
+    #   third dimension --> ~10 hours of data
+
+    sensorData = []
+    for patient in listOfPatients:
+        dataLength = DataHandler.loadNumpySensorData(listOfSensors[0], patient).shape[1]
+        tempData = np.zeros((len(listOfSensors), dataLength))
+        for idxSensor, sensor in enumerate(listOfSensors):
+            tempData[idxSensor,:] = DataHandler.loadNumpySensorData(sensor,patient)
+        sensorData.append(tempData)
+
+    segmentedData = PreProcessing.segmentData(sensorData)
+    print(segmentedData.shape)
+
+
 
