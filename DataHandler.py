@@ -12,7 +12,7 @@ def readCSVData(fileName, patientID):
             dataReader = csv.reader(csvfile, delimiter=',')
             #get the number of rows of the csv file
             row_count = sum(1 for row in dataReader)
-            data = np.zeros((1, row_count))
+            data = np.zeros((1, row_count-1))
             #reset the reader to the first row
             csvfile.seek(0)
             dataReader = csv.reader(csvfile, delimiter=',')
@@ -21,7 +21,7 @@ def readCSVData(fileName, patientID):
             #read the data
             for row in dataReader:
                 #print(row)
-                data[0,dataReader.line_num-1] = float(row[0])
+                data[0,dataReader.line_num-2] = float(row[0])
             return data
 
 # save the given data 'data' under the name 'fileName' in the directory with the patients ID

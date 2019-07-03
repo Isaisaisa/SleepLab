@@ -22,24 +22,34 @@ def segmentData(data):
     #number of datapoints, 30 seconds with 10 Hz --> 300 datapoints
     numberOfDataPoints = 30 * 10
     # calculate the total number of 30 seconds windows
-    # only full 30 second windows will be used --> remaining parts are discarded
     numberOfWindows  = 0
     for dataSet in data:
-        numberOfWindows += dataSet.shape[1] // numberOfDataPoints
+        #numberOfWindows += dataSet.shape[1] // numberOfDataPoints
+        numberOfWindows += np.ceil(dataSet.shape[1] / numberOfDataPoints)
     #create empty array for segmented data
-    dataSegmented = np.zeros((numberOfWindows , data[0].shape[0], numberOfDataPoints))
+    dataSegmented = np.zeros((int(numberOfWindows) , data[0].shape[0], numberOfDataPoints))
 
     #save the windows into 3d numpy array, specified as given above
     counter = 0
     for dataSet in data:
         for i in range(0, dataSet.shape[1], numberOfDataPoints):
+            #full 30 second windows
             if i+numberOfDataPoints <= dataSet.shape[1]:
                 dataSegmented[counter, :,:] = dataSet[:,i : i+numberOfDataPoints]
+                counter = counter + 1
+            #remaining elements, not full 30 second windows, fill up with zeros
+            else:
+                remainingElements = dataSet.shape[1] - i
+                tempArray = np.zeros((dataSet.shape[0],dataSet.shape[1] +1))
+                tempArray = dataSet[:, i : i + remainingElements]
+                concatenatedArray = np.concatenate((tempArray, np.zeros((5, numberOfDataPoints - remainingElements))),1)
+                dataSegmented[counter, :,:] = concatenatedArray
                 counter = counter + 1
 
     return dataSegmented
 
 # this function extract the labels from the csv files and changes the strings to numbers
+#this function extract the labels from the csv files and changes the strings to numbers
 def extract_labels(patNr):
     path = cfg.LOADPATH + str(patNr) + "\\SleepStaging.csv"
     with open(path, 'rt') as csvfile:
@@ -52,12 +62,12 @@ def extract_labels(patNr):
         # skip the first row due to unimportant informations
         next(dataReader)
 
-        label = np.zeros((1, row_count))
+        label = np.zeros((1, row_count-1))
         #change the string label to numbers
         label_dict = {"WK": 1, "REM": 2, "N1": 3, "N2": 4, "N3": 5}
         # read the data
         for row in dataReader:
             row[2] = label_dict[row[2]]
-            print(row[2])
-            label[0, dataReader.line_num - 1] = row[2]
+            #print(row[2])
+            label[0, dataReader.line_num - 2] = row[2]
         return label

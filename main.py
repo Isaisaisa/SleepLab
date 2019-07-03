@@ -2,12 +2,14 @@ import DataHandler
 import PreProcessing
 import numpy as np
 import config_dev as cfg
+import os
 import matplotlib.pyplot as plt
 
 #switches
 LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY = False
 LOAD_SAVED_NUMPY_DATA_AND_DOWNSAMPLE = False
 SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY = True
+LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY = True
 
 # add the sensors that should be used
 listOfSensors = []
@@ -69,8 +71,17 @@ if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
     #   second dimension --> number of sensors
     #   third dimension --> 30 second of the origin input data at 10 Hz = 300 data points
     segmentedData = PreProcessing.segmentData(sensorData)
+    filepath = os.path.join(cfg.SAVEPATH, 'segmentedData' + '.npy')
+    np.save(filepath, segmentedData)
     print(segmentedData.shape)
 
-    label_pat1 = PreProcessing.extract_labels(1)
 
 
+if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
+    #extract labels from csv file
+    labels = np.zeros(0)
+    for patient in listOfPatients:
+        label_pat = PreProcessing.extract_labels(patient)
+        labels = np.append(labels, label_pat[0])
+    filepath = os.path.join(cfg.SAVEPATH, 'SleepStaging' + '.npy')
+    np.save(filepath, labels)
