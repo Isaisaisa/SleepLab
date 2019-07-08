@@ -3,6 +3,7 @@ import scipy.signal as signal
 import numpy as np
 import csv
 import config_dev as cfg
+import os
 
 #This function downsample data 'data' with the given 'frequency'
 def downsample(data, frequency):
@@ -51,7 +52,7 @@ def segmentData(data):
 # this function extract the labels from the csv files and changes the strings to numbers
 #this function extract the labels from the csv files and changes the strings to numbers
 def extract_labels(patNr):
-    path = cfg.LOADPATH + str(patNr) + "\\SleepStaging.csv"
+    path = os.path.join(cfg.LOADPATH, str(patNr), "SleepStaging.csv")
     with open(path, 'rt') as csvfile:
         dataReader = csv.reader(csvfile, delimiter=',')
         # get the number of rows of the csv file

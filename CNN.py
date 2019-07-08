@@ -36,5 +36,5 @@ class CNN():
 
 
     def predfict(self, testData):
-        predictedClasses = self.model.predict(x=testData)
-        return predictedClasses
+        predicted_classes = self.model.predict(x=testData)
+        return predicted_classes

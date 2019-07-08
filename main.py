@@ -105,18 +105,27 @@ randomOrder = np.random.permutation(len(segmentedData[:, 0, 0]))
 labelRandom = labels[randomOrder]
 segmentedDataRandom = segmentedData[randomOrder]
 
-trainData = segmentedDataRandom[0:4835, :, :]
-trainLabel = labelRandom[0:4835]
-testData = segmentedDataRandom[4835:, :, :]
-testLabel = labelRandom[4835:]
+samples = len(segmentedData[:, 0, 0])
+sections = round(samples / len(listOfPatients))
+for idx in range(len(listOfPatients)):
 
-# from label to onehot Vector
-oneHotGT = np.zeros((trainLabel.shape[0], 5))
-for i in range(0, trainLabel.shape[0]):
-    oneHotGT[i, int(trainLabel[i]) - 1] = 1
+    teststart = idx*sections
+    testend = teststart + sections
 
-trainDataExpanded = trainData[..., np.newaxis]
-cnn.train(trainDataExpanded, oneHotGT)
-predictedClasses = cnn.predfict(testData)
+    testData = segmentedDataRandom[teststart:testend, :, :]
+    testLabel = labelRandom[teststart:testend]
+
+    # trainData = segmentedDataRandom[0:idx*sections, :, :] + segmentedDataRandom[idx*sections+sections:, :, :]
+    trainData = np.concatenate((segmentedDataRandom[0:idx*sections, :, :], segmentedDataRandom[idx*sections+sections:, :, :]))
+    trainLabel = np.concatenate((labelRandom[0:idx*sections], labelRandom[idx*sections+sections:]))
+
+    # from label to onehot Vector
+    oneHotGT = np.zeros((trainLabel.shape[0], 5))
+    for i in range(0, trainLabel.shape[0]):
+        oneHotGT[i, int(trainLabel[i]) - 1] = 1
+
+    trainDataExpanded = trainData[..., np.newaxis]
+    cnn.train(trainDataExpanded, oneHotGT)
+    predictedClasses = cnn.predfict(testData)
 
 

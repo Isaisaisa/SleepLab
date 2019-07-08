@@ -8,7 +8,7 @@ import os
 # Function to read CSV data from the 'fileName'
 # Returns data object (numpy array)
 def readCSVData(fileName, patientID):
-    with open(cfg.LOADPATH+ str(patientID) + "\\" +  fileName + ".csv", "rt") as csvfile:
+    with open(os.path.join(cfg.LOADPATH, str(patientID), fileName + ".csv"), "rt") as csvfile:
             dataReader = csv.reader(csvfile, delimiter=',')
             #get the number of rows of the csv file
             row_count = sum(1 for row in dataReader)
@@ -30,7 +30,7 @@ def saveNumpyData(data, fileName, patientID):
     filepath = os.path.join(cfg.SAVEPATH, str(patientID),  fileName + '.npy')
     if not os.path.exists(filepath):
         #if not os.path.exists(cfg.SAVEPATH):
-        os.makedirs(cfg.SAVEPATH + str(patientID) + "\\", exist_ok=True)
+        os.makedirs(os.path.join(cfg.SAVEPATH, str(patientID)), exist_ok=True)
         print('numpy array does not exist yet (',filepath, ')' )
         np.save(filepath, data)
 
@@ -42,4 +42,4 @@ def readCSVDataAndSaveAsNumpy(fileName, patientID):
 
 # this function loads the numpy array of the sensor data
 def loadNumpySensorData(sensorName, patientID):
-    return np.load(cfg.SAVEPATH + "\\" + str(patientID) + "\\" + sensorName + ".npy")
+    return np.load(os.path.join(cfg.SAVEPATH, str(patientID), sensorName + ".npy"))
