@@ -117,6 +117,7 @@ for i in range(0, trainLabel.shape[0]):
 
 trainDataExpanded = trainData[..., np.newaxis]
 cnn.train(trainDataExpanded, oneHotGT)
-predictedClasses = cnn.predfict(testData)
+predictedClasses = cnn.predfict(testData[...,np.newaxis])
+fScore = cnn.evaluate(testLabel, predictedClasses.argmax(axis=1))
 
 

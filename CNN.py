@@ -1,5 +1,6 @@
 from keras import layers
 from keras.models import Sequential
+import sklearn.metrics as metrics
 
 
 class CNN():
@@ -21,20 +22,39 @@ class CNN():
         c = 1
         chanDim = -1
         # add model layers
-        self.model.add(layers.Conv2D(64, kernel_size=(3, 3), padding='valid', activation='relu', input_shape=(h, w, c)))
+        self.model.add(layers.Conv2D(64, kernel_size=(3, 3), padding='same', input_shape=(h, w, c)))
         self.model.add(layers.BatchNormalization(axis=-1))
-        self.model.add(layers.Conv2D(32, kernel_size=3, activation='relu'))
+        self.model.add(layers.ReLU())
+        self.model.add(layers.MaxPool2D(pool_size=(1,2)))
+        self.model.add(layers.Conv2D(32, kernel_size=3, padding='same'))
+        self.model.add(layers.BatchNormalization(axis=-1))
+        self.model.add(layers.ReLU())
+        self.model.add(layers.MaxPool2D(pool_size=(1,2)))
+        self.model.add(layers.Conv2D(16, kernel_size=3,padding='same'))
+        self.model.add(layers.BatchNormalization(axis=-1))
+        self.model.add(layers.ReLU())
+        self.model.add(layers.MaxPool2D(pool_size=(1,2)))
+        self.model.add(layers.BatchNormalization(axis=-1))
         self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(5, activation='softmax'))
+        self.model.add(layers.Dense(100, activation='relu'))
+        self.model.add(layers.Dropout(0.3))
+        self.model.add(layers.Dense(5,activation='softmax'))
 
         # compile model using accuracy to measure model performance
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 
+    #function to train the model
     def train(self, trainDataExpanded, oneHotGT):
-        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5)
+        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5, shuffle = True)
 
-
+    #function to predict class labels
     def predfict(self, testData):
-        predictedClasses = self.model.predict(x=testData)
+        predictedClasses = self.model.predict_proba(x=testData)
         return predictedClasses
+
+    #function to calculate the f1 score
+    def evaluate(self,y_true, y_pred):
+        score = metrics.f1_score(y_true= y_true, y_pred = y_pred, average='macro')
+        return score
+
