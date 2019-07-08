@@ -85,3 +85,57 @@ if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
         labels = np.append(labels, label_pat[0])
     filepath = os.path.join(cfg.SAVEPATH, 'SleepStaging' + '.npy')
     np.save(filepath, labels)
+
+
+#from label to onehot Vector
+oneHotGT = np.zeros((labels.shape[0], 5))
+for i in range(0,labels.shape[0]):
+    oneHotGT[i,int(labels[i])-1] = 1
+
+
+# first try to build a CNN model
+from keras.models import Sequential
+from keras import layers
+#create model
+model = Sequential()
+b = oneHotGT.shape[0]  # must be redefined
+w = 300  # must be redefined
+h = len(listOfSensors)  # must be redefined
+c = 1
+chanDim = -1
+#add model layers
+model.add(layers.Conv2D(64, kernel_size=(3,3), padding='valid', activation='relu',  input_shape=(h,w,c )))
+model.add(layers.BatchNormalization(axis = -1))
+model.add(layers.Conv2D(32, kernel_size=3, activation='relu'))
+model.add(layers.Flatten())
+model.add(layers.Dense(5, activation='softmax'))
+
+#compile model using accuracy to measure model performance
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+#train the model
+
+#split the dataset in five parts
+# 6043 samples / 5 ~= 1208; 1208 * 5 = 6040 --> 3 samples missing
+# training set --> 1208 * 4 + 3 = 4835 samples
+# test set --> 1208 samples
+randomOrder = np.random.permutation(len(segmentedData[:,0,0]))
+labelRandom = labels[randomOrder]
+segmentedDataRandom = segmentedData[randomOrder]
+
+trainData = segmentedDataRandom[0:4835,:,:]
+trainLabel = labelRandom[0:4835]
+testData = segmentedDataRandom[4835:,:,:]
+testLabel = labelRandom[4835:]
+
+#from label to onehot Vector
+oneHotGT = np.zeros((trainLabel.shape[0], 5))
+for i in range(0,trainLabel.shape[0]):
+    oneHotGT[i,int(trainLabel[i])-1] = 1
+
+trainDataExpanded = trainData[..., np.newaxis]
+model.fit(x = trainDataExpanded, y=oneHotGT, epochs=5)
+print('yeah')
+
+
+predictedClasses = model.predict(x= testData)
