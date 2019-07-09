@@ -16,9 +16,8 @@ class CNN():
         # first try to build a CNN model
 
         # create model
-        # model = Sequential()
-        w = 300  # must be redefined
-        h = lengthOfSensors  # must be redefined
+        w = 300
+        h = lengthOfSensors
         c = 1
         chanDim = -1
         # add model layers
@@ -46,7 +45,7 @@ class CNN():
 
     #function to train the model
     def train(self, trainDataExpanded, oneHotGT):
-        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5, shuffle = True)
+        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5, batch_size=32, shuffle = True)
 
     #function to predict class labels
     def predfict(self, testData):

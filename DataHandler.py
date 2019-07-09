@@ -47,7 +47,7 @@ def loadNumpySensorData(sensorName, patientID):
 # this function returns a onehot vector representation from a given label vector
 def getOneHotGTVectotr(labelVector):
     # from label to onehot Vector
-    oneHotGT = np.zeros((labelVector.shape[0], np.amax(labelVector)))
+    oneHotGT = np.zeros((labelVector.shape[0], int(np.amax(labelVector))))
     for i in range(0, labelVector.shape[0]):
         oneHotGT[i, int(labelVector[i]) - 1] = 1
     return oneHotGT

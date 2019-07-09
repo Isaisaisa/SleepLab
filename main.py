@@ -127,7 +127,7 @@ for idx in range(len(listOfPatients)):
     #get predictions
     predictedClasses = cnn.predfict(testData[...,np.newaxis])
     #calculate f1 score
-    fScore = cnn.evaluate(testLabel, predictedClasses.argmax(axis=1)-1)
+    fScore = cnn.evaluate(testLabel+1, predictedClasses.argmax(axis=1)-1)
     fScoreOverall.append(fScore)
 
 for idx, val in enumerate(fScoreOverall):
