@@ -88,23 +88,21 @@ if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
     np.save(filepath, labels)
 
 
-#from label to onehot Vector
-oneHotGT = np.zeros((labels.shape[0], 5))
-for i in range(0,labels.shape[0]):
-    oneHotGT[i,int(labels[i])-1] = 1
 
+#create CNN
 cnn = CNN.CNN()
 cnn.create_model(len(listOfSensors))
+
 # train the model
 
-# split the dataset in five parts
-# 6043 samples / 5 ~= 1208; 1208 * 5 = 6040 --> 3 samples missing
-# training set --> 1208 * 4 + 3 = 4835 samples
-# test set --> 1208 samples
+# shuffle data
 randomOrder = np.random.permutation(len(segmentedData[:, 0, 0]))
 labelRandom = labels[randomOrder]
 segmentedDataRandom = segmentedData[randomOrder]
 
+#f1 score over all validations
+fScoreOverall = []
+# split the dataset in five parts to train with 4 and test with 1 --> cross fold validation
 samples = len(segmentedData[:, 0, 0])
 sections = round(samples / len(listOfPatients))
 for idx in range(len(listOfPatients)):
@@ -120,13 +118,20 @@ for idx in range(len(listOfPatients)):
     trainLabel = np.concatenate((labelRandom[0:idx*sections], labelRandom[idx*sections+sections:]))
 
     # from label to onehot Vector
-    oneHotGT = np.zeros((trainLabel.shape[0], 5))
-    for i in range(0, trainLabel.shape[0]):
-        oneHotGT[i, int(trainLabel[i]) - 1] = 1
+    oneHotGT = DataHandler.getOneHotGTVectotr(trainLabel)
 
+    #train the net
     trainDataExpanded = trainData[..., np.newaxis]
     cnn.train(trainDataExpanded, oneHotGT)
-    predictedClasses = cnn.predfict(testData[...,np.newaxis])
-    fScore = cnn.evaluate(testLabel, predictedClasses.argmax(axis=1))
 
+    #get predictions
+    predictedClasses = cnn.predfict(testData[...,np.newaxis])
+    #calculate f1 score
+    fScore = cnn.evaluate(testLabel, predictedClasses.argmax(axis=1)-1)
+    fScoreOverall.append(fScore)
+
+for idx, val in enumerate(fScoreOverall):
+    print("fScore for the ", idx, ". configuration of train and test set: ", val)
+
+print("f1 score as mean over all validation sets:", sum(fScoreOverall) / len(fScoreOverall))
 

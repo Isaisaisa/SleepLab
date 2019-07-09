@@ -43,3 +43,11 @@ def readCSVDataAndSaveAsNumpy(fileName, patientID):
 # this function loads the numpy array of the sensor data
 def loadNumpySensorData(sensorName, patientID):
     return np.load(os.path.join(cfg.SAVEPATH, str(patientID), sensorName + ".npy"))
+
+# this function returns a onehot vector representation from a given label vector
+def getOneHotGTVectotr(labelVector):
+    # from label to onehot Vector
+    oneHotGT = np.zeros((labelVector.shape[0], np.amax(labelVector)))
+    for i in range(0, labelVector.shape[0]):
+        oneHotGT[i, int(labelVector[i]) - 1] = 1
+    return oneHotGT
