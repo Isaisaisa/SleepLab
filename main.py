@@ -89,9 +89,7 @@ if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
 
 
 
-#create CNN
-cnn = CNN.CNN()
-cnn.create_model(len(listOfSensors))
+
 
 # train the model
 
@@ -106,6 +104,10 @@ fScoreOverall = []
 samples = len(segmentedData[:, 0, 0])
 sections = round(samples / len(listOfPatients))
 for idx in range(len(listOfPatients)):
+
+    # create new CNN
+    cnn = CNN.CNN()
+    cnn.create_model(len(listOfSensors))
 
     teststart = idx*sections
     testend = teststart + sections
@@ -127,7 +129,8 @@ for idx in range(len(listOfPatients)):
     #get predictions
     predictedClasses = cnn.predfict(testData[...,np.newaxis])
     #calculate f1 score
-    fScore = cnn.evaluate(testLabel+1, predictedClasses.argmax(axis=1)-1)
+    fScore = cnn.evaluate(testLabel-1, predictedClasses.argmax(axis=1))
+    print("-----------", fScore, "---------")
     fScoreOverall.append(fScore)
 
 for idx, val in enumerate(fScoreOverall):

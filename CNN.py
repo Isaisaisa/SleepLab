@@ -21,7 +21,7 @@ class CNN():
         c = 1
         chanDim = -1
         # add model layers
-        self.model.add(layers.Conv2D(64, kernel_size=(3, 3), padding='same', input_shape=(h, w, c)))
+        self.model.add(layers.Conv2D(64, kernel_size=(3, 3), padding='same', input_shape=(h, w, c) ))
         self.model.add(layers.BatchNormalization(axis=-1))
         self.model.add(layers.ReLU())
         #self.model.add(layers.MaxPool2D(pool_size=(1,2)))
@@ -35,6 +35,7 @@ class CNN():
         #self.model.add(layers.MaxPool2D(pool_size=(1,2)))
         self.model.add(layers.BatchNormalization(axis=-1))
         self.model.add(layers.Flatten())
+        self.model.add(layers.Dense(300, activation='relu'))
         self.model.add(layers.Dense(100, activation='relu'))
         self.model.add(layers.Dropout(0.3))
         self.model.add(layers.Dense(5,activation='softmax'))
@@ -45,7 +46,7 @@ class CNN():
 
     #function to train the model
     def train(self, trainDataExpanded, oneHotGT):
-        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5, batch_size=32, shuffle = True)
+        self.model.fit(x=trainDataExpanded, y=oneHotGT, epochs=5, batch_size=64, shuffle = True)
 
     #function to predict class labels
     def predfict(self, testData):
