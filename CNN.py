@@ -32,7 +32,7 @@ class CNN():
         self.model.add(layers.BatchNormalization(axis=-1))
         self.model.add(layers.ReLU())
         #self.model.add(layers.MaxPool2D(pool_size=(2,2)))
-        self.model.add(layers.BatchNormalization(axis=-1))
+        #self.model.add(layers.BatchNormalization(axis=-1))
         self.model.add(layers.Flatten())
         self.model.add(layers.Dense(300, activation='relu'))
         self.model.add(layers.Dropout(0.3))
