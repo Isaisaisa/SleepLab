@@ -9,8 +9,8 @@ import CNN
 #switches
 LOAD_RAW_DATA_AND_SAVE_IT_AS_NUMPY_ARRAY = False
 LOAD_SAVED_NUMPY_DATA_AND_DOWNSAMPLE = False
-SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY = True
-LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY = True
+#SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY = True
+#LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY = True
 
 # add the sensors that should be used
 listOfSensors = []
@@ -53,39 +53,39 @@ if LOAD_SAVED_NUMPY_DATA_AND_DOWNSAMPLE:
             DataHandler.saveNumpyData(dataResampled, sensor + "_resampled", patient)
 
 #Segmentation
-if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
+#if SEGMENT_WINDOW_AND_SAVE_AS_NUMPY_ARRAY:
     #load the data from numpy arrays and save in dataList as 3d numpy array
     #   first dimension -> number of patient
     #   second dimension --> XX sensors
     #   third dimension --> ~10 hours of data
 
-    sensorData = []
-    for patient in listOfPatients:
-        dataLength = DataHandler.loadNumpySensorData(listOfSensors[0], patient).shape[1]
-        tempData = np.zeros((len(listOfSensors), dataLength))
-        for idxSensor, sensor in enumerate(listOfSensors):
-            tempData[idxSensor,:] = DataHandler.loadNumpySensorData(sensor,patient)
-        sensorData.append(tempData)
+sensorData = []
+for patient in listOfPatients:
+    dataLength = DataHandler.loadNumpySensorData(listOfSensors[0], patient).shape[1]
+    tempData = np.zeros((len(listOfSensors), dataLength))
+    for idxSensor, sensor in enumerate(listOfSensors):
+        tempData[idxSensor,:] = DataHandler.loadNumpySensorData(sensor,patient)
+    sensorData.append(tempData)
 
     #segmentedData contains the segmented 30 sec windows as discussed in a 3d numpy array
     #   first dimension --> number of samples
     #   second dimension --> number of sensors
     #   third dimension --> 30 second of the origin input data at 10 Hz = 300 data points
-    segmentedData = PreProcessing.segmentData(sensorData)
-    filepath = os.path.join(cfg.SAVEPATH, 'segmentedData' + '.npy')
-    np.save(filepath, segmentedData)
-    print(segmentedData.shape)
+segmentedData = PreProcessing.segmentData(sensorData)
+filepath = os.path.join(cfg.SAVEPATH, 'segmentedData' + '.npy')
+np.save(filepath, segmentedData)
+print(segmentedData.shape)
 
 
 
-if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
+#if LOAD_LABELS_AND_SAVE_IT_AS_NUMPY_ARRAY:
     #extract labels from csv file
-    labels = np.zeros(0)
-    for patient in listOfPatients:
-        label_pat = PreProcessing.extract_labels(patient)
-        labels = np.append(labels, label_pat[0])
-    filepath = os.path.join(cfg.SAVEPATH, 'SleepStaging' + '.npy')
-    np.save(filepath, labels)
+labels = np.zeros(0)
+for patient in listOfPatients:
+    label_pat = PreProcessing.extract_labels(patient)
+    labels = np.append(labels, label_pat[0])
+filepath = os.path.join(cfg.SAVEPATH, 'SleepStaging' + '.npy')
+np.save(filepath, labels)
 
 
 
