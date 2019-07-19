@@ -10,7 +10,7 @@ The respective folders are created when starting the process/program.
     
 ### Run project
 
-    python PATH\TO\PROJECT\
+    python PATH\TO\PROJECT\SleepLab\main.py
     
 ### Project structure
 For each Process step we have a separated class/file. The file main.py starts all the Process at once and includes some boolean variables as switches. When you start it for the first time, all swtiches should be set to "True". Some new folders will be created under the path you specified under ```SAVEPATH``` in the configuration file (see the heading [Configure config file](#marker-hHeader-configure-config-file)).
