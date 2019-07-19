@@ -8,6 +8,12 @@ be renamed to ``` config_dev.py ```. Then you can configure the paths to the ori
 The constant ``` SAVEPATH ``` defines where the processed data will be saved e.g. the recorded data as numpy array.
 The respective folders are created when starting the process/program.
     
+### Rename the patients
+
+We renamed the patient folder names so simplify the process. 
+Each patient folder got an identity from 1 to 5 according "patientIDs_README.txt"
+
+
 ### Run project
 
     python PATH\TO\PROJECT\SleepLab\main.py
