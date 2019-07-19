@@ -19,7 +19,7 @@ Each patient folder got an identity from 1 to 5 according ```` patientIDs_README
     python PATH\TO\PROJECT\SleepLab\main.py
     
 ### Project structure
-For each Process step we have a separated class/file. The file main.py starts all the Process at once and includes some boolean variables as switches. When you start it for the first time, all swtiches should be set to "True". Some new folders will be created under the path you specified under ```SAVEPATH``` in the configuration file (see the heading [Configure config file](#marker-hHeader-configure-config-file)).
+For each Process step we have a separated class/file. The file main.py starts all the Process at once and includes some boolean variables as switches. When you start it for the first time, all swtiches should be set to "True". We suggest to turn the second switch off and use the downsampled data provided via moodle as raw data (our downsampling implementation runs for a long time). Some new folders will be created under the path you specified under ```SAVEPATH``` in the configuration file (see the heading [Configure config file](#marker-hHeader-configure-config-file)).
 Make sure the recorded data files are stored under the path you specified under ````LOADPATH````
 Additionally add the patients id´s and the names of the sensor you want to use to the list. An example is shown below:
 
